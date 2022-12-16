@@ -1,17 +1,26 @@
 import { Box, Center, Input } from "@chakra-ui/react";
-import { MouseEventHandler, useContext, useState } from "react";
+import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../components/AppContext";
 import { Card } from "../components/Card";
 import DButton from "../components/DButton";
 import { login } from "../services/login";
-import { changeLocalStorage } from "../services/storage";
+import { changeLocalStorage, getAllLocalStorage } from "../services/storage";
 
 const Home = () => {
     const [ email, setEmail ] = useState<string>('')
     const [ senha, setSenha ] = useState<string>('')
     const { setIsLoggedIn } = useContext(AppContext)
     const navigate = useNavigate()
+
+    const storage = getAllLocalStorage()
+    
+    useEffect(()=>{
+        if(storage){
+        const {login} = JSON.parse(storage)
+        if(login === true)navigate('/conta/1')
+        }
+    }, [navigate, storage])
 
     const validateUser = async (email: string, senha: string) => {
         const loggedIn = await login(email, senha)
